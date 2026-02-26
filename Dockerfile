@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 
-# Install dependencies
+# Install dependencies including devDependencies (for tsx, typescript)
 RUN npm install
 
 COPY . .
@@ -16,7 +16,4 @@ USER 1000
 
 EXPOSE 7860
 
-# Write environment variables to .dev.vars for wrangler dev
-CMD echo "JINA_API_KEY=$JINA_API_KEY" > .dev.vars && \
-    echo "VITE_GHOST_API_KEY=$VITE_GHOST_API_KEY" >> .dev.vars && \
-    npx wrangler dev --port 7860 --ip 0.0.0.0
+CMD ["npx", "tsx", "-r", "tsconfig-paths/register", "src/server.ts"]

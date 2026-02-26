@@ -1,0 +1,11 @@
+{
+  "jsonrpc": "2.0",
+  "id": "test-1",
+  "method": "tools/call",
+  "params": {
+    "name": "read_url",
+    "arguments": {
+      "url": "https://www.berlin-buehnen.de/en/schedule"
+    }
+  }
+}

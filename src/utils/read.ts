@@ -107,7 +107,7 @@ export async function readUrlFromConfig(
         };
     } catch (error) {
         return {
-            error: error instanceof Error ? error.message : String(error),
+            error: error instanceof Error ? `${error.message}\nStack: ${error.stack}` : String(error),
             url: urlConfig.url
         };
     }

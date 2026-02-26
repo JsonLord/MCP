@@ -248,7 +248,11 @@ export default {
 				}
 			});
 
-			return handler(request, env, ctx);
+			try {
+				return await handler(request, env, ctx);
+			} catch (e: any) {
+				return new Response(`Internal Error Details: ${e.message}\n${e.stack}`, { status: 500 });
+			}
 		}
 
 		// Handle /health endpoint

@@ -1,0 +1,1 @@
+exports.EmailMessage = class {};
