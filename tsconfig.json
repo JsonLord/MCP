@@ -17,7 +17,12 @@
 		"types": [
 			"./worker-configuration.d.ts",
 			"node"
-		]
+		],
+		"baseUrl": ".",
+		"paths": {
+			"cloudflare:email": ["src/mocks/email.js"],
+			"cloudflare:workers": ["src/mocks/workers.js"]
+		}
 	},
 	"include": ["worker-configuration.d.ts", "src/**/*.ts"]
 }

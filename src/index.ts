@@ -174,8 +174,8 @@ export default {
 		// Add Ghost API key for Jina blog search
 		props.ghostApiKey = env.VITE_GHOST_API_KEY;
 
-		// API base URL for embedding/reranker endpoints (bypasses Cloudflare proxy issues)
-		props.apiBaseUrl = env.API_BASE_URL || 'https://api.jina.ai';
+		// API base URL for embedding/reranker endpoints
+		props.apiBaseUrl = 'https://api.jina.ai';
 
 		// Extract context information for the primer tool
 		const context: any = {};
@@ -248,7 +248,64 @@ export default {
 				}
 			});
 
-			return handler(request, env, ctx);
+			try {
+				return await handler(request, env, ctx);
+			} catch (e: any) {
+				return new Response(`Internal Error Details: ${e.message}\n${e.stack}`, { status: 500 });
+			}
+		}
+
+		// Handle /health endpoint
+		if (url.pathname === "/health") {
+			return new Response("OK", { status: 200 });
+		}
+
+		// Handle /api-docs endpoint
+		if (url.pathname === "/api-docs") {
+			return new Response(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jina MCP Server API Docs</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+        h1 { border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .endpoint { background: #f4f4f4; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .method { font-weight: bold; color: #0056b3; }
+        .path { font-family: monospace; background: #e0e0e0; padding: 2px 5px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Jina MCP Server API Documentation</h1>
+    <p>This server implements the Model Context Protocol (MCP) for Jina AI tools.</p>
+
+    <div class="endpoint">
+        <span class="method">GET</span> <span class="path">/</span>
+        <p>Returns server information and available tools in YAML format.</p>
+    </div>
+
+    <div class="endpoint">
+        <span class="method">GET/POST</span> <span class="path">/v1</span>
+        <p>MCP Protocol Endpoint. Handles JSON-RPC messages.</p>
+    </div>
+
+    <div class="endpoint">
+        <span class="method">GET</span> <span class="path">/sse</span>
+        <p>Server-Sent Events endpoint for MCP.</p>
+    </div>
+
+    <div class="endpoint">
+        <span class="method">GET</span> <span class="path">/health</span>
+        <p>Health check endpoint. Returns "OK".</p>
+    </div>
+
+    <h2>Tools Available</h2>
+    <ul>
+        ${ALL_TOOLS.map(t => `<li>${t}</li>`).join('')}
+    </ul>
+</body>
+</html>`, { headers: { "Content-Type": "text/html" } });
 		}
 
 		// Handle root path with helpful information

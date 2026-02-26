@@ -21,6 +21,9 @@ import {
 	formatParallelSearchResultsToContentItems
 } from "../utils/search.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { readUrlFromConfig, executeParallelUrlReads } from "../utils/read.js";
+import { guessDatetimeFromUrl } from "../utils/guess-datetime.js";
+import { searchBibtex } from "../utils/bibtex.js";
 
 export function registerJinaTools(server: McpServer, getProps: () => any, enabledTools: Set<string> | null = null) {
 	// Helper to get client name for guardrail check
@@ -87,9 +90,6 @@ export function registerJinaTools(server: McpServer, getProps: () => any, enable
 			},
 			async ({ url }: { url: string }) => {
 				try {
-					// Import the utility function
-					const { guessDatetimeFromUrl } = await import("../utils/guess-datetime.js");
-
 					// Analyze the URL for datetime information
 					const result = await guessDatetimeFromUrl(url);
 
@@ -198,9 +198,6 @@ export function registerJinaTools(server: McpServer, getProps: () => any, enable
 					if (typeof url === 'string' || (Array.isArray(url) && url.length === 1)) {
 						const singleUrl = typeof url === 'string' ? url : url[0];
 
-						// Import the utility function
-						const { readUrlFromConfig } = await import("../utils/read.js");
-
 						// Use the shared utility function
 						const result = await readUrlFromConfig({ url: singleUrl, withAllLinks: withAllLinks || false, withAllImages: withAllImages || false }, props.bearerToken);
 
@@ -223,9 +220,6 @@ export function registerJinaTools(server: McpServer, getProps: () => any, enable
 						const uniqueUrls = urls.filter((urlConfig, index, self) =>
 							index === self.findIndex(u => u.url === urlConfig.url)
 						);
-
-						// Import the utility functions
-						const { executeParallelUrlReads } = await import("../utils/read.js");
 
 						// Execute parallel URL reads using the utility
 						const results = await executeParallelUrlReads(uniqueUrls, props.bearerToken, 30000);
@@ -788,9 +782,6 @@ export function registerJinaTools(server: McpServer, getProps: () => any, enable
 						index === self.findIndex(u => u.url === urlConfig.url)
 					);
 
-					// Import the utility functions
-					const { executeParallelUrlReads } = await import("../utils/read.js");
-
 					// Execute parallel URL reads using the utility
 					const results = await executeParallelUrlReads(uniqueUrls, props.bearerToken, timeout);
 
@@ -1115,9 +1106,6 @@ export function registerJinaTools(server: McpServer, getProps: () => any, enable
 			},
 			async ({ query, num, year, author }: { query: string; num: number; year?: number; author?: string }) => {
 				try {
-					// Import the utility function
-					const { searchBibtex } = await import("../utils/bibtex.js");
-
 					// Execute search
 					const results = await searchBibtex({ query, num, year, author });
 
