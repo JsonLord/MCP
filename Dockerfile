@@ -19,5 +19,4 @@ EXPOSE 7860
 # Write environment variables to .dev.vars for wrangler dev
 CMD echo "JINA_API_KEY=$JINA_API_KEY" > .dev.vars && \
     echo "VITE_GHOST_API_KEY=$VITE_GHOST_API_KEY" >> .dev.vars && \
-    echo "API_BASE_URL=$API_BASE_URL" >> .dev.vars && \
     npx wrangler dev --port 7860 --ip 0.0.0.0
